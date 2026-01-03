@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>スパ調査ツール V4 (Dark)</title>
+    <title>スパ調査ツール V4.1</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* --- ダークモード & スマホ最適化スタイル --- */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; 
             padding: 15px; 
-            background-color: #121212;
+            background-color: #121212; 
             color: #e0e0e0; 
             max-width: 600px; 
             margin: 0 auto; 
@@ -20,6 +20,7 @@
         h1 { font-size: 1.2rem; text-align: center; margin: 10px 0 20px; color: #90caf9; }
         h2 { font-size: 1rem; border-left: 4px solid #90caf9; padding-left: 10px; margin-top: 30px; color: #fff; }
 
+        /* 仮説・テーマ入力欄 */
         .hypothesis-box {
             background: #1e1e1e; padding: 10px; border-radius: 8px; border: 1px solid #333; margin-bottom: 20px;
         }
@@ -29,13 +30,15 @@
             color: #fff; font-size: 1rem; padding: 5px; outline: none;
         }
 
+        /* 入力セクション */
         .section { background: #1e1e1e; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .label-title { font-size: 0.9rem; font-weight: bold; color: #bbb; margin-top: 10px; display: block; }
 
+        /* ボタン群 */
         .btn-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; margin-top: 8px; }
         
         button.option-btn {
-            padding: 15px 5px;
+            padding: 15px 5px; 
             background: #2c2c2c; border: 1px solid #444; border-radius: 8px; 
             color: #ccc; cursor: pointer; font-size: 13px; font-weight: bold;
             transition: all 0.1s;
@@ -46,8 +49,10 @@
             background-color: #90caf9; color: #000; border-color: #90caf9;
         }
 
+        /* 特別なボタン色 */
         #group-action button.option-btn.active { background-color: #ffcc80; color: #000; border-color: #ffcc80; }
         
+        /* メモ入力欄 */
         .memo-area { margin-top: 15px; }
         .memo-area input {
             width: 100%; padding: 12px; background: #333; border: 1px solid #555; border-radius: 6px; 
@@ -55,6 +60,7 @@
         }
         .memo-area input::placeholder { color: #777; }
 
+        /* 記録ボタン */
         #save-btn {
             width: 100%; padding: 18px; margin-top: 20px; border: none; border-radius: 10px;
             font-size: 18px; font-weight: bold; cursor: pointer; color: #000; 
@@ -63,6 +69,7 @@
         }
         #save-btn:active { transform: translateY(2px); box-shadow: none; }
 
+        /* ログ表示 */
         #log-area { 
             max-height: 250px; overflow-y: auto; background: #1e1e1e; padding: 10px; 
             border-radius: 8px; font-size: 12px; border: 1px solid #333; margin-top: 10px; 
@@ -71,15 +78,18 @@
         th, td { border-bottom: 1px solid #333; padding: 8px; text-align: left; color: #ccc; }
         .memo-text { color: #ffcc80; display: block; margin-top: 2px; font-size: 11px; }
 
-        .footer-btns { display: flex; gap: 10px; margin-top: 30px; }
-        .sub-btn { flex: 1; padding: 12px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: bold; }
+        /* フッターボタン */
+        .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
+        .btn-row { display: flex; gap: 10px; }
+        .sub-btn { flex: 1; padding: 14px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: bold; font-size: 14px;}
         
+        /* グラフコンテナ */
         .chart-card { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <h1>🌙 スパ調査ツール V4 (Insight)</h1>
+    <h1>🌙 スパ調査ツール V4.1</h1>
 
     <div class="hypothesis-box">
         <label>🎯 今日の調査テーマ（仮説）:</label>
@@ -108,7 +118,7 @@
         </div>
 
         <label class="label-title">👤 ③ 属性・グループ</label>
-        <div class="btn-group" id="group-group">
+        <div class="btn-group">
             <button class="option-btn" onclick="select('group', '男性ソロ', this)">男性ソロ</button>
             <button class="option-btn" onclick="select('group', '女性ソロ', this)">女性ソロ</button>
             <button class="option-btn" onclick="select('group', '男性グループ', this)">男性G</button>
@@ -139,8 +149,12 @@
     </div>
 
     <div class="footer-btns">
-        <button class="sub-btn" style="background:#555;" onclick="downloadCSV()">📥 CSV保存</button>
-        <button class="sub-btn" style="background:#d32f2f;" onclick="clearData()">🗑 全消去</button>
+        <button class="sub-btn" style="background:#06c755; font-size:16px;" onclick="copyToClipboard()">📋 データをコピー (LINE送信などに)</button>
+        
+        <div class="btn-row">
+            <button class="sub-btn" style="background:#555;" onclick="downloadCSV()">📥 CSV保存</button>
+            <button class="sub-btn" style="background:#d32f2f;" onclick="clearData()">🗑 全消去</button>
+        </div>
     </div>
 
     <script>
@@ -148,6 +162,7 @@
         Chart.defaults.borderColor = '#444';
 
         let current = { place: '', action: '', group: '' };
+        // V4と同じキーを使うことで、前回のデータを引き継ぎます
         let records = JSON.parse(localStorage.getItem('spaSurveyV4')) || [];
         let hypothesis = localStorage.getItem('spaHypothesis') || '';
         let myChart = null;
@@ -208,7 +223,6 @@
             
             [...records].reverse().forEach(r => {
                 const memoHtml = r.memo ? `<br><span class="memo-text">📝 ${r.memo}</span>` : '';
-                
                 tbody.innerHTML += `<tr>
                     <td>${r.timeStr}</td>
                     <td>${r.group}</td>
@@ -225,15 +239,10 @@
 
         function updateChart() {
             if (records.length === 0) return;
-
             const counts = {};
-            records.forEach(r => {
-                counts[r.action] = (counts[r.action] || 0) + 1;
-            });
-
+            records.forEach(r => { counts[r.action] = (counts[r.action] || 0) + 1; });
             const ctx = document.getElementById('chart-action').getContext('2d');
             if (myChart) myChart.destroy();
-
             myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -245,27 +254,54 @@
                         borderWidth: 0
                     }]
                 },
-                options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-                }
+                options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
             });
         }
 
+        // ▼▼▼ 新機能：テキストコピー機能 ▼▼▼
+        function copyToClipboard() {
+            if(records.length === 0) {
+                alert("データがまだありません。記録してから押してください。");
+                return;
+            }
+
+            const currentHypothesis = document.getElementById('hypothesis-input').value;
+            let text = `【スパ調査レポート】\n仮説テーマ: ${currentHypothesis}\n\n`;
+
+            records.forEach(r => {
+                // 日付を見やすく整形
+                const dt = new Date(r.timestamp);
+                const dateStr = `${dt.getMonth()+1}/${dt.getDate()}`;
+                const memoStr = r.memo ? ` (📝${r.memo})` : "";
+                
+                // LINEで見やすい形式に変換
+                text += `● ${dateStr} ${r.timeStr}\n`;
+                text += `　${r.place} / ${r.group} / ${r.action}${memoStr}\n`;
+            });
+
+            // クリップボードにコピー
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert("✅ コピーしました！\n\nLINEやメモ帳を開いて「貼り付け」してください。");
+                }).catch(err => {
+                    alert("コピーに失敗しました。");
+                });
+            } else {
+                alert("このブラウザでは対応していません。");
+            }
+        }
+        // ▲▲▲▲▲▲
+
         function downloadCSV() {
             if(records.length === 0) return alert("データがありません");
-            
             let csv = "\uFEFF日時,場所,属性,行動・状態,メモ,その時の仮説テーマ\n";
             const currentHypothesis = document.getElementById('hypothesis-input').value;
-
             records.forEach(r => {
                 const cleanMemo = (r.memo || "").replace(/,/g, "、");
                 const dt = new Date(r.timestamp);
-                const dateStr = `${dt.getFullYear()}/${dt.getMonth()+1}/${dt.getDate()} ${dt.getHours()}:${String(dt.getMinutes()).padStart(2, '0')}`;
-                
+                const dateStr = `${dt.getFullYear()}/${dt.getMonth()+1}/${dt.getDate()} ${dt.getHours()}:${dt.getMinutes()}`;
                 csv += `${dateStr},${r.place},${r.group},${r.action},${cleanMemo},${currentHypothesis}\n`;
             });
-
             const link = document.createElement("a");
             link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
             link.download = "spa_insight_survey.csv";
